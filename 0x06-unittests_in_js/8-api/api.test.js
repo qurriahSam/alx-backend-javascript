@@ -1,14 +1,34 @@
-const chai = require('chai');
-const expect = chai.expect;
 const request = require('request');
+const { expect } = require('chai');
 
-describe('test the API', () => {
-  it('test the API with status, body', (done) => {
-    request('http://localhost:7865', 'GET', (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('Welcome to the payment system');
+describe('Index page', () => {
+  const API_URL = 'http://localhost:7865';
+
+  it('should return correct status code 200', (done) => {
+    request.get(`${API_URL}/`, (error, response) => {
+      expect(response.statusCode).to.equal(200);
+      done();
     });
-    done();
+  });
+
+  it('should return correct result', (done) => {
+    request.get(`${API_URL}/`, (error, response, body) => {
+      expect(body).to.equal('Welcome to the payment system');
+      done();
+    });
+  });
+
+  it('should return correct content-type header', (done) => {
+    request.get(`${API_URL}/`, (error, response) => {
+      expect(response.headers['content-type']).to.include('text/html');
+      done();
+    });
+  });
+
+  it('should return 404 for incorrect endpoint', (done) => {
+    request.get(`${API_URL}/invalid-endpoint`, (error, response) => {
+      expect(response.statusCode).to.equal(404);
+      done();
+    });
   });
 });

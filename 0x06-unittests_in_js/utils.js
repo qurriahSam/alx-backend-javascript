@@ -1,9 +1,19 @@
 const Utils = {
   calculateNumber(type, a, b) {
-    if (type == 'SUM') return Math.round(a) + Math.round(b);
-    if (type == 'SUBTRACT') return Math.round(a) - Math.round(b);
-    if (type == 'DIVIDE') return Math.round(b) != 0 ? Math.round(a) / Math.round(b) : 'ERROR';
-  }
-}
+    a = Math.round(a);
+    b = Math.round(b);
+
+    if (type === "SUM") {
+      return a + b;
+    } else if (type === "SUBTRACT") {
+      return a - b;
+    } else if (type === "DIVIDE") {
+      if (!b) {
+        return "Error";
+      }
+      return a / b;
+    }
+  },
+};
 
 module.exports = Utils;

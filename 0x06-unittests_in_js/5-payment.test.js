@@ -1,31 +1,28 @@
-const chai = require('chai');
-const expect = chai.expect;
+const Utils = require("./utils");
+const sinon = require("sinon");
+const assert = require("assert");
+const sendPaymentRequestToApi = require("./5-payment");
 
-const sinon = require('sinon');
-const sendPaymentRequestToApi = require('./5-payment');
-
-describe('sendPaymentRequestToApi', () => {
-  let consolespy;
+describe("calculateNumber", () => {
+  let logSpy;
 
   beforeEach(() => {
-    consolespy = sinon.spy(console, 'log');
-  });
-  afterEach(() => {
-    consolespy.restore();
+    logSpy = sinon.spy(console, "log");
   });
 
-  it('test the send Pyament Request with 100, 20', () => {
+  it("should log the correct message", () => {
     sendPaymentRequestToApi(100, 20);
-
-    expect(consolespy.calledWithExactly('The total is: 120')).to.be.true;
-    expect(consolespy.CalledOnce);
+    sinon.assert.calledWith(logSpy, "The total is: 120");
+    sinon.assert.calledOnce(logSpy);
   });
 
-  it('test the send Pyament Request with 10, 10', () => {
+  it("should log the correct message", () => {
     sendPaymentRequestToApi(10, 10);
-
-    expect(consolespy.calledOnceWithExactly('The total is: 20')).to.be.true;
-    expect(consolespy.CalledOnce);
+    sinon.assert.calledWith(logSpy, "The total is: 20");
+    sinon.assert.calledOnce(logSpy);
   });
 
+  afterEach(() => {
+    logSpy.restore();
+  });
 });

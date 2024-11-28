@@ -1,13 +1,15 @@
 const express = require('express');
+
 const app = express();
 const port = 7865;
 
-app.get('/', (rq, rs) => {
-  rs.send('Welcome to the payment system');
+app.get('/', (req, res) => {
+  res.send('Welcome to the payment system');
 });
 
-app.get('/cart/:id([0-9]+)', (rq, rs) => {
-  rs.send(`Payment methods for cart ${rq.params.id}`);
+app.get('/cart/:id(\\d+)', (req, res) => {
+  const id = req.params.id;
+  res.send(`Payment methods for cart ${id}`);
 });
 
 app.listen(port, () => {

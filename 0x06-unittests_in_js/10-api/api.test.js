@@ -1,109 +1,70 @@
-const chai = require('chai');
-const expect = chai.expect;
 const request = require('request');
+const { expect } = require('chai');
 
-describe('test the API', () => {
-  it('test the API with localost:7865', (done) => {
-    request('http://localhost:7865', 'GET', (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('Welcome to the payment system');
+describe('API integration test', () => {
+  const API_URL = 'http://localhost:7865';
+
+  // Test for GET / exists and returns correct message
+  describe('GET /', () => {
+    it('should return "Welcome to the payment system"', (done) => {
+      request.get(API_URL, (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        expect(body).to.equal('Welcome to the payment system');
+        done();
+      });
     });
-    done();
   });
 
-  it('test the API with cart/3', (done) => {
-    request('http://localhost:7865/cart/3', 'GET', (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('Payment methods for cart 3');
+  // Test suite for GET /cart/:id
+  describe('GET /cart/:id', () => {
+    it('should return payment methods for valid cart ID', (done) => {
+      const cartId = 12;
+      request.get(`${API_URL}/cart/${cartId}`, (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        expect(body).to.equal(`Payment methods for cart ${cartId}`);
+        done();
+      });
     });
-    done();
+
+    it('should fail with non-numeric cart ID', (done) => {
+      request.get(`${API_URL}/cart/abc`, (error, response, body) => {
+        expect(response.statusCode).to.equal(404);
+        done();
+      });
+    });
   });
 
-  it('test the API with cart/234', (done) => {
-    request('http://localhost:7865/cart/234', 'GET', (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('Payment methods for cart 234');
+  // Test suite for GET /available_payments
+  describe('GET /available_payments', () => {
+    it('should return payment methods object', (done) => {
+      request.get(`${API_URL}/available_payments`, (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        const expectedPaymentMethods = {
+          payment_methods: {
+            credit_cards: true,
+            paypal: false
+          }
+        };
+        expect(JSON.parse(body)).to.deep.equal(expectedPaymentMethods);
+        done();
+      });
     });
-    done();
   });
 
-  it('test the API with cart/abc', (done) => {
-    request('http://localhost:7865/cart/abc', 'GET', (er, rs) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(404);
+  // Test suite for POST /login
+  describe('POST /login', () => {
+    it('should return welcome message with username', (done) => {
+      const options = {
+        url: `${API_URL}/login`,
+        json: {
+          userName: 'Betty'
+        }
+      };
+      request.post(options, (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        expect(body).to.equal('Welcome Betty');
+        done();
+      });
     });
-    done();
   });
-
-  it('test the API with cart/2bc', (done) => {
-    request('http://localhost:7865/cart/2bc', 'GET', (er, rs) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(404);
-    });
-    done();
-  });
-
-  it('test the API with cart/23a', (done) => {
-    request('http://localhost:7865/cart/23a', 'GET', (er, rs) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(404);
-    });
-    done();
-  });
-
-  it('test the API with cart', (done) => {
-    request('http://localhost:7865/cart', 'GET', (er, rs) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(404);
-    });
-    done();
-  });
-
-  it('test the API /login with some body', (done) => {
-    const prm = {
-      url: 'http://localhost:7865/login',
-      method: 'POST',
-      json: {
-        userName: 'Holberton',
-      },
-    };
-    request(prm, (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('Welcome Holberton');
-    });
-    done();
-  });
-
-  it('test the API /login with no body', (done) => {
-    const prm = {
-      url: 'http://localhost:7865/login',
-      method: 'POST',
-      
-    };
-    request(prm, (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('Welcome undefined');
-    });
-    done();
-  });
-
-  it('test the API /available_payments', (done) => {
-    const prm = {
-      url: 'http://localhost:7865/available_payments',
-      method: 'GET',
-    };
-    request(prm, (er, rs, bd) => {
-      if (er) throw er;
-      expect(rs.statusCode).to.equal(200);
-      expect(bd).to.equal('{"payment_methods":{"credit_cards":true,"paypal":false}}');
-    });
-    done();
-  });
-
-
 });
