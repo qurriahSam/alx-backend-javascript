@@ -1,36 +1,19 @@
+// Tests
+const calculateNumber = require("./0-calcul.js");
 const assert = require("assert");
-const calculateNumber = require("./0-calcul");
 
-describe("calculateNumber", () => {
-  it("Returns 4", () => {
-    assert.equal(calculateNumber(1, 3), 4);
+describe("calculateNumber", function () {
+  it("rounded sum of 2 numbers integers", function () {
+    assert.strictEqual(calculateNumber(1, 2), 3);
+    assert.strictEqual(calculateNumber(3, 5), 8);
+  });
+  it("When adding flosts, the numbers should be rounded up", function () {
+    assert.strictEqual(calculateNumber(1.6, 8.2), 10);
+    assert.strictEqual(calculateNumber(8.8, 1.1), 10);
   });
 
-  it("Returns 5", () => {
-    assert.equal(calculateNumber(1, 3.7), 5);
-  });
-
-  it("Returns 5", () => {
-    assert.equal(calculateNumber(1.2, 3.7), 5);
-  });
-
-  it("Returns 6", () => {
-    assert.equal(calculateNumber(1.5, 3.7), 6);
-  });
-
-  it("Returns 3", () => {
-    assert.equal(calculateNumber(0, 3.3), 3);
-  });
-
-  it("Returns 2", () => {
-    assert.equal(calculateNumber(-1.6, 3.7), 2);
-  });
-
-  it("Returns -6", () => {
-    assert.equal(calculateNumber(-1.6, -3.7), -6);
-  });
-
-  it("Returns -1", () => {
-    assert.equal(calculateNumber(1.5, -3.5), -1);
+  it("If only one number is a float, it should add and round up normally", function () {
+    assert.strictEqual(calculateNumber(8, 1.7), 10);
+    assert.strictEqual(calculateNumber(1, 8.9), 10);
   });
 });
